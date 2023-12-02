@@ -1,7 +1,9 @@
-
-import { Component, OnInit } from "@angular/core";
+import { ProductsService } from "./../../services/products.service";
+import { Component, OnDestroy, OnInit } from "@angular/core";
+import { Subscription } from "rxjs";
 import { Product } from "src/app/models/product.model";
-import { CartService } from "src/app/services/cart.services";
+import { CartService } from "src/app/services/cart.service";
+import { StoreService } from "src/app/services/store.service";
 
 const ROWS_HEIGHT: { [id: number]: number } = { 1: 400, 3: 335, 4: 350 };
 
@@ -9,14 +11,32 @@ const ROWS_HEIGHT: { [id: number]: number } = { 1: 400, 3: 335, 4: 350 };
   selector: "app-home",
   templateUrl: "/home.component.html",
 })
-export class HomeComponent implements OnInit {
+export class HomeComponent implements OnInit, OnDestroy {
   cols = 3;
   rowHeight = ROWS_HEIGHT[this.cols];
   category: string | undefined;
+  products: Array<Product> | undefined;
+  sort = "desc";
+  count = "12";
+  productsSubcription: Subscription | undefined;
 
-  constructor(private cartService: CartService) { }
+  constructor(
+    private cartService: CartService,
+    private storeService: StoreService,
+    private productsService: ProductsService
+  ) {}
 
-  ngOnInit(): void {}
+  ngOnInit(): void {
+    this.getProducts();
+  }
+
+  getProducts(): void {
+    // this.productsSubcription = this.storeService.getAllProducts(this.count, this.sort)
+    //   .subscribe((products) => {
+    //   this.products = products;
+    // });
+    this.products = this.productsService.getProducts();
+  }
 
   onColumnsCountChange(colsNum: number): void {
     this.cols = colsNum;
@@ -25,16 +45,22 @@ export class HomeComponent implements OnInit {
 
   onShowCategory(newCategory: string): void {
     this.category = newCategory;
+    this.products = this.productsService.FilterProductsByCategory(this.category);
   }
 
   onAddToCart(product: Product): void {
-  this.cartService.addToCart ({
-    product: product.image,
-    name:product.title,
-    price: product.price,
-    quantity:1,
-    id: product.id,
-  });
-}
+    this.cartService.addToCart({
+      product: product.image,
+      name: product.title,
+      price: product.price,
+      quantity: 1,
+      id: product.id,
+    });
+  }
 
+  ngOnDestroy(): void {
+    // if (this.productsSubcription) {
+    // this.productsSubcription.unsubscribe();
+    // }
+  }
 }
