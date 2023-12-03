@@ -14,7 +14,7 @@ export class CartService {
   addToCart(item: CartItem): void {
     const items = [...this.cart.value.items];
 
-    const itemInCart = items.find((_item) => _item.id === item.id);
+    const itemInCart = items.find((_item) => _item.product.id === item.product.id);
 
     if (itemInCart) {
       itemInCart.quantity += 1;
@@ -30,7 +30,7 @@ export class CartService {
   let itemForRemoval: CartItem | undefined;
 
    let filteredItems = this.cart.value.items.map((_item) => {	
-    if (_item.id === item.id) {
+    if (_item.product.id === item.product.id) {
       _item.quantity --;
 
       if(_item.quantity === 0) {
@@ -50,9 +50,10 @@ export class CartService {
 }
 
   getTotal(items: Array<CartItem>): number {
-    return items.
-      map((item) => item.price * item.quantity)
-      .reduce((prev, current) => prev + current, 0);
+    // return the total price of the cart
+    return items.reduce((prev, current) => {
+      return prev + (current.product.price * current.quantity);
+    }, 0);
   }
   
   clearCart(): void {
@@ -63,7 +64,7 @@ export class CartService {
 
   removeFromCart(item: CartItem, update = true ): Array<CartItem> {
     const filteredItems =  this.cart.value.items.filter(
-      (_item) => _item.id !== item.id
+      (_item) => _item.product.id !== item.product.id
     );
 
     if (update) {
