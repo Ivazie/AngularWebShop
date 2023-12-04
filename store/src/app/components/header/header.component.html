@@ -1,11 +1,11 @@
 <mat-toolbar class="max-w-7x1 mx-auto border-x justify-between">
-    <a routerLink="home">Cardápio Carollices</a>
+    <img class="logo" src="../../../assets/logo.png" alt="logo">
+    <a class="home" >CÁRDAPIO</a>
     <button mat-icon-button [matMenuTriggerFor]="menu">
-        <mat-icon 
+        <mat-icon class="shop"
         [matBadge]="itemsQuantity" 
         [matBadgeHidden]="!itemsQuantity"
-        matBadgeColor="warn"
-        >shopping_cart</mat-icon>
+        matBadgeColor="warn">shopping_cart</mat-icon>
     </button>
     <mat-menu #menu="matMenu">
         <div class="p-3 divide-y divide-solid">
